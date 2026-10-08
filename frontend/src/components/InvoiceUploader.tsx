@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Alert, Button, List, Typography, Upload } from "antd";
+import { API } from "../config";
 import {
   DeleteOutlined,
   InboxOutlined,
@@ -53,16 +54,13 @@ function InvoiceUploader({ onInvoicesProcessed, token }: InvoiceUploaderProps) {
 
         formData.append("factura", file);
 
-        const response = await fetch(
-          "http://localhost:3000/api/facturas/upload",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: formData,
+        const response = await fetch(`${API}/api/facturas/upload`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+          body: formData,
+        });
 
         if (!response.ok) {
           throw new Error(`Error procesando ${file.name}`);

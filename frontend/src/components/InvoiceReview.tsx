@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Alert, Button, Select } from "antd";
 import { CheckOutlined } from "@ant-design/icons";
+import { API } from "../config";
 
 type Producto = {
   codigo: string;
@@ -239,12 +240,9 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(
-          "http://localhost:3000/api/facturas/providers",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const res = await fetch(`${API}/api/facturas/providers`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const data = await res.json();
         if (data.ok && Array.isArray(data.items)) setProviders(data.items);
       } catch (err) {
@@ -264,12 +262,9 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
           sortDir: "desc",
         });
 
-        const res = await fetch(
-          `http://localhost:3000/api/facturas?${params.toString()}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const res = await fetch(`${API}/api/facturas?${params.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const data = await res.json();
         if (data.ok && Array.isArray(data.items)) {
           setRecentInvoices(data.items);
@@ -477,20 +472,17 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
 
     try {
       // 0. Verificar si el proveedor existe; si no existe, pedir confirmación para crearlo
-      const provResponse = await fetch(
-        "http://localhost:3000/api/facturas/find-provider",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            proveedor: facturaAEnviar.proveedor,
-            cifProveedor: facturaAEnviar.cifProveedor,
-          }),
+      const provResponse = await fetch(`${API}/api/facturas/find-provider`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          proveedor: facturaAEnviar.proveedor,
+          cifProveedor: facturaAEnviar.cifProveedor,
+        }),
+      });
 
       const provData = await provResponse.json();
 
@@ -520,20 +512,17 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
       }
 
       // 1. Verificar si la factura ya existe en el backend
-      const checkResponse = await fetch(
-        "http://localhost:3000/api/facturas/check-duplicate",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            proveedor: facturaAEnviar.proveedor,
-            numeroFactura: facturaAEnviar.numeroFactura,
-          }),
+      const checkResponse = await fetch(`${API}/api/facturas/check-duplicate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          proveedor: facturaAEnviar.proveedor,
+          numeroFactura: facturaAEnviar.numeroFactura,
+        }),
+      });
 
       const checkData = await checkResponse.json();
 
@@ -555,7 +544,7 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
       }
 
       // 3. Proceder al guardado en BBDD si no existía o si el usuario aceptó forzarlo
-      const response = await fetch("http://localhost:3000/api/facturas", {
+      const response = await fetch(`${API}/api/facturas`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -685,7 +674,7 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
                         if (prov) {
                           try {
                             const resp = await fetch(
-                              `http://localhost:3000/api/facturas/providers/${prov._id}/products`,
+                              `${API}/api/facturas/providers/${prov._id}/products`,
                             );
                             const pd = await resp.json();
                             if (pd.ok && Array.isArray(pd.items)) {

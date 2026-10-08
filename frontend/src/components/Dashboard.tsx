@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import DashboardFilters from "./DashboardFilters";
 import DashboardResults from "./DashboardResults";
+import { API } from "../config";
 import type {
   DashboardFiltersState,
   FacturaItem,
@@ -57,12 +58,9 @@ function Dashboard({ token, onInvoiceSelect }: DashboardProps) {
       },
     );
 
-    const response = await fetch(
-      `http://localhost:3000/api/facturas?${params.toString()}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
+    const response = await fetch(`${API}/api/facturas?${params.toString()}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     const data = await response.json();
     if (data.ok) {
       setResults(data.items || []);
@@ -99,7 +97,7 @@ function Dashboard({ token, onInvoiceSelect }: DashboardProps) {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/facturas/providers/${providerId}/products`,
+        `${API}/api/facturas/providers/${providerId}/products`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
       const data = await response.json();
@@ -114,26 +112,17 @@ function Dashboard({ token, onInvoiceSelect }: DashboardProps) {
   useEffect(() => {
     const loadDashboardOptions = async () => {
       try {
-        const providersResponse = await fetch(
-          "http://localhost:3000/api/facturas/providers",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const providersResponse = await fetch(`${API}/api/facturas/providers`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const providersData = await providersResponse.json();
-        if (
-          providersData.ok &&
-          Array.isArray(providersData.items)
-        ) {
+        if (providersData.ok && Array.isArray(providersData.items)) {
           setProviders(providersData.items);
         }
 
-        const productsResponse = await fetch(
-          "http://localhost:3000/api/facturas/products",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
+        const productsResponse = await fetch(`${API}/api/facturas/products`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const productsData = await productsResponse.json();
         if (productsData.ok && Array.isArray(productsData.items)) {
           setAllProducts(productsData.items);
@@ -181,10 +170,7 @@ function Dashboard({ token, onInvoiceSelect }: DashboardProps) {
   const productAggregates = useMemo<ProductAggregate[]>(() => {
     if (selectedProductName) return [];
 
-    const aggregates = new Map<
-      string,
-      { cantidad: number; importe: number }
-    >();
+    const aggregates = new Map<string, { cantidad: number; importe: number }>();
     results.forEach((invoice) => {
       (invoice.productos || []).forEach((product) => {
         const name = String(product.nombre || "").trim();

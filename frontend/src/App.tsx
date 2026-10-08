@@ -14,6 +14,7 @@ import InvoiceReview from "./components/InvoiceReview";
 import Dashboard from "./components/Dashboard";
 import HistoryTab from "./components/HistoryTab";
 import "./App.css";
+import { API } from "./config";
 
 const STORAGE_KEY = "facturas-app-token";
 
@@ -40,7 +41,7 @@ function App() {
     try {
       const endpoint =
         authMode === "login" ? "/api/auth/login" : "/api/auth/register";
-      const response = await fetch(`http://localhost:3000${endpoint}`, {
+      const response = await fetch(`${API}${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

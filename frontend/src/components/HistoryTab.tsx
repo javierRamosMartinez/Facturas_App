@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Spin } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
+import { API } from "../config";
 
 type ProviderLike =
   | string
@@ -76,14 +77,11 @@ function HistoryTab({ token, initialSelectedId = null }: HistoryTabProps) {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://localhost:3000/api/facturas/history?limit=25",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch(`${API}/api/facturas/history?limit=25`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         const data = await response.json();
         if (!response.ok || !data.ok) {
@@ -173,7 +171,7 @@ function HistoryTab({ token, initialSelectedId = null }: HistoryTabProps) {
       };
 
       const response = await fetch(
-        `http://localhost:3000/api/facturas/${selectedInvoice._id}`,
+        `${API}/api/facturas/${selectedInvoice._id}`,
         {
           method: "PUT",
           headers: {
