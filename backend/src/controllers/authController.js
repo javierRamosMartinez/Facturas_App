@@ -1,8 +1,11 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Usuario = require("../models/Usuario");
+const JWT_SECRET = process.env.JWT_SECRET;
 
-const JWT_SECRET = process.env.JWT_SECRET || "facturas-app-secret-change-me";
+if (!JWT_SECRET) {
+    throw new Error("Falta la variable de entorno JWT_SECRET");
+}
 
 const register = async (req, res) => {
     try {

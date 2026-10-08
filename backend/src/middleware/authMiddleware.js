@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = process.env.JWT_SECRET || "facturas-app-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+    throw new Error("Falta la variable de entorno JWT_SECRET");
+}
 
 const authMiddleware = (req, res, next) => {
     try {
