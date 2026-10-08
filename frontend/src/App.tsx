@@ -255,7 +255,17 @@ function App() {
           <InvoiceUploader onInvoicesProcessed={setInvoices} token={token} />
 
           {invoices.length > 0 && (
-            <InvoiceReview invoices={invoices as any[]} token={token} />
+            <InvoiceReview
+              invoices={invoices as any[]}
+              token={token}
+              onSaveSuccess={(savedInvoiceIndex) => {
+                setInvoices((currentInvoices) =>
+                  currentInvoices.filter(
+                    (_, invoiceIndex) => invoiceIndex !== savedInvoiceIndex,
+                  ),
+                );
+              }}
+            />
           )}
         </div>
       ) : screen === "history" ? (

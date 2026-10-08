@@ -53,7 +53,7 @@ type Factura = {
 
 type InvoiceReviewProps = {
   invoices: Factura[];
-  onSaveSuccess?: () => void;
+  onSaveSuccess?: (invoiceIndex: number) => void;
   token: string;
 };
 
@@ -278,7 +278,7 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
     })();
   }, []);
 
-  if (!editableInvoices || editableInvoices.length === 0) {
+  if ((!editableInvoices || editableInvoices.length === 0) && !message) {
     return null;
   }
 
@@ -563,9 +563,12 @@ function InvoiceReview({ invoices, onSaveSuccess, token }: InvoiceReviewProps) {
         type: "success",
         text: `Factura ${facturaAEnviar.numeroFactura} guardada correctamente en MongoDB.`,
       });
+      setEditableInvoices((currentInvoices) =>
+        currentInvoices.filter((_, index) => index !== invoiceIndex),
+      );
 
       if (onSaveSuccess) {
-        onSaveSuccess();
+        onSaveSuccess(invoiceIndex);
       }
     } catch (err) {
       console.error(err);
